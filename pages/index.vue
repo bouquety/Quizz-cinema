@@ -5,7 +5,7 @@
       <div class="container">
                   <img src="../assets/images/Red and Black Shadow Loud Voices for Justice Logo (1).png">
 
-        <div class="row" id="champ_txt">
+        <div class="row">
           <h1 class="tittleone">ENVIE DE TESTER VOS CONNAISSANCES CINEMATOGRAPHIQUE ? </h1>
           <p class="txt_title">
             Bienvenue au quizz ! Une série de question vous sera proposé, vous devrez y répondre par "oui" ou par "non". Essayer de répondre au maximum de question que vous pouvez dans le temps imparti ! Bonne chance !
@@ -32,9 +32,9 @@ export default {
 
 
 img{
-      position: absolute;
-    left: 41%;
-    top: 18%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 .section_un {
   background-image: url("../assets/images/black-monochrome-simple-background-texture-circle-light-534895-wallhere.com.jpg");
@@ -56,7 +56,6 @@ img{
     text-transform: uppercase;
     font-weight: bold;
     padding-bottom: 19px;
-    margin-top: 30px;
 }
 
 .txt_title {
@@ -80,8 +79,5 @@ img{
   border: 1px solid #fff;
 }
 
-#champ_txt {
-  margin-top: 154px;
-  margin-left: 290px;
-}
+
 </style>

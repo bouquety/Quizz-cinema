@@ -1,10 +1,16 @@
 <template>
  <div class="section_un">
-      <div class="container">
-
-        
+   <div class="container">
+<p class="question">
+       did {{acteur_movie[random]}}   play in {{movie_title[random]}}
+          </p>
       </div>
+          <b-button class="btn_oui">Oui</b-button>
+          <b-button class="btn_oui">Non</b-button>
+
     </div>
+
+
 </template>
 
 <script>
@@ -12,21 +18,42 @@ export default{
     data() {
     this.apikeys= process.env.APIKEY
     return{
-        baseUrl : 'https://api.themoviedb.org/3/discover/movie',
-        movie:{},
-        movie_title:[]
+        baseUrl : 'https://api.themoviedb.org/3',
+        movie:[],
+        movie_title:[],
+        acteur:[],
+        acteur_movie:[],
+        random:''
     }
     },
-  mounted(){
-      this.initQuizz()
+  created(){
+      this.initQuizz(), this.getRandomMovie()
   },
 
     methods: {
         async initQuizz(){
-            this.movie = await this.$axios.$get(this.baseUrl+'?api_key='+this.apikeys)
+            this.movie = await this.$axios.$get(this.baseUrl+'/movie/popular?api_key='+this.apikeys)
             for (var i = 0; i < this.movie.results.length; i++) {
                 this.movie_title.push(this.movie.results[i].title)
                 }
+                console.log(this.movie)
+                this.acteur = await this.$axios.$get(this.baseUrl+'/person/popular?api_key='+this.apikeys)
+                 for (var i = 0; i < this.acteur.results.length; i++) {
+                   this.acteur_movie.push(this.acteur.results[i].name)
+                }
+                   console.log(this.acteur)
+
+
+        },
+
+        responseQuizz(){
+
+        },
+
+        getRandomMovie(){
+          let min=0; 
+          let max=10;  
+          this.random = Math.floor(Math.random() * (max - min)) + min; 
         }
     }
 }
@@ -47,5 +74,11 @@ export default{
   -moz-background-size: cover;
   -o-background-size: cover;
   image-rendering: -webkit-optimize-contrast;
+}
+
+.question {
+  color: #fff;
+  font-size: 20px;
+  line-height: 1.3;
 }
 </style>
