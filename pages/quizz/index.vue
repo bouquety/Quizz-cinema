@@ -9,27 +9,32 @@
     <div class="container">
       <div class="row">                  
       <p class="question">
-        {{ acteur_movie[random] }} à joué dans {{ movie_title[random] }} ?
+        {{questions}}
       </p>
       </div>
-      <div class="row">
+      <div class="row" v-if="statut == 'notRespond'">
     <b-button class="btn_response" v-on:click="responseQuizz('Oui')">Oui</b-button>
     <b-button class="btn_response" v-on:click="responseQuizz('Non')">Non</b-button>
     </div>
-    <div v-if="result === true">
+     <div class="row" v-else>
+    <b-button class="btn_response" disabled>Oui</b-button>
+    <b-button class="btn_response" disabled>Non</b-button>
+    </div>
+    <div v-if="result == true && statut == 'respond'">
       <p class="response_true">
         Super bonne réponse ;) ! 
       </p>
-      <b-button class="btn_response" v-on:click="responseQuizz('Suivant')">Suivant</b-button>
+      <b-button class="btn_response" v-on:click="nextQuestion()">Suivant</b-button>
       </div>
-      <div v-if="result === false">
+      <div v-if="result == false && statut == 'respond'">
              <p class="response_false">
         Dommage Mauvaise réponse :( ! 
       </p>
-      <b-button class="btn_response" v-on:click="responseQuizz('Suivant')">Suivant</b-button>
+      <b-button class="btn_response" v-on:click="nextQuestion()">Suivant</b-button>
       </div>
   </div>
-<img :src="'{{poster}}'">
+<img :src="poster">
+<img :src="acteur_image">
   </div>
 </template>
 
@@ -39,18 +44,22 @@ export default {
     this.apikeys = process.env.APIKEY;
     return {
       baseUrl: "https://api.themoviedb.org/3",
-      UrlImage: "",
       movie: [],
       movie_title: [],
       acteur: [],
       acteur_movie: [],
+      acteur_poster:[],
       movie_poster:[],
       poster:'',
+      acteur_image:'',
       random: "",
       id: [],
       movie_id: [],
       score:0,
-      result:''
+      result:'',
+      questions:'',
+      statut:'notRespond'
+
     };
   },
   created() {
@@ -62,7 +71,6 @@ export default {
       this.movie = await this.$axios.$get(
         this.baseUrl + "/movie/popular?api_key=" + this.apikeys
       )
-      console.log(this.movie)
       for (var i = 0; i < this.movie.results.length; i++) {
         this.movie_title.push(this.movie.results[i].title)
         this.movie_id.push(this.movie.results[i].id)
@@ -70,17 +78,24 @@ export default {
       }
       this.acteur = await this.$axios.$get(
         this.baseUrl + "/person/popular?api_key=" + this.apikeys
-      );
+      )
+            console.log(this.acteur.results)
+
       for (var i = 0; i < this.acteur.results.length; i++) {
-        this.acteur_movie.push(this.acteur.results[i].name);
+        this.acteur_movie.push(this.acteur.results[i].name)
+        this.acteur_poster.push(this.acteur.results[i].profile_path)
       }
       this.poster= "https://image.tmdb.org/t/p/original"+ this.movie_poster[this.random]
-      console.log(this.poster)
+      this.acteur_image= "https://image.tmdb.org/t/p/original"+ this.acteur_poster[this.random]
+      this.questions= this.acteur_movie[this.random]+" à joué dans "+ this.movie_title[this.random] +" ?"
+        
+     
     },
     
 
     async responseQuizz(responseUser) {
       let responseResultat
+      this.statut='respond'
       this.id = await this.$axios.$get(
         this.baseUrl +
           "/movie/" +
@@ -90,11 +105,15 @@ export default {
       );
       for (var i = 0; i < this.id.cast.length; i++) {
         if (this.acteur_movie[this.random] == this.id.cast[i].name) {
-          return responseResultat = true;
+          console.log('true')
+           responseResultat = true;
         }
+      
       }
       if (responseResultat == true){
+      
         if (responseUser == "Oui") {
+       
           this.result=true
           return this.score+=1
         } else {
@@ -102,6 +121,7 @@ export default {
         }
       }
       else {
+      console.log('falseeee')
          if (responseUser == "Oui") {
           return this.result=false
         } else {
@@ -110,12 +130,18 @@ export default {
         }
       }
     },
-
+    
     getRandomMovie() {
       let min = 0;
-      let max = 10;
+      let max = 20;
       this.random = Math.floor(Math.random() * (max - min)) + min;
     },
+
+    nextQuestion(){
+      this.statut='notRespond'
+      this.getRandomMovie()
+      this.initQuizz()
+    }
   },
 };
 </script>
