@@ -1,9 +1,7 @@
 <template>
-  <div class="section_un">
+  <div class="section_un ">
     <b-modal   centered ref="gameover"  header-class="justify-content-center" title="Game Over" hide-footer hide-header-close no-close-on-backdrop no-close-on-esc>
-    <!-- <div class="modal-header text-center">
-  <h3 class="modal-title w-100">Quiz Results</h3>
-</div> -->
+  
     <div class="d-block text-center">
      <p> Malheureusement le temps imparti est écoulé ! </p>
      <p> Votre score est de {{score}} </p>
@@ -11,42 +9,53 @@
     </div>
         <b-button class="mt-3" block v-on:click="nextQuestion()">Recommencer </b-button>
   </b-modal>
+  <div class="time_score">
     <div class="score">
    Score : {{score}}
 </div>
-<div class="time">
-   Temps restant : {{timer}}
+<div class="time" :style="{'color':color_timer}">
+   Temps restant : {{timer}} secondes
 </div>
+  </div>
     <div class="container">
+    
       <div class="row">                  
       <p class="question">
         {{questions}}
       </p>
       </div>
+  <div class="image_movie">
+<img  class="acteur" :src="acteur_image">
+<img  class="movie" :src="poster">
+  </div>
       <div class="row" v-if="statut == 'notRespond'">
+ 
     <b-button class="btn_response" v-on:click="responseQuizz('Oui')">Oui</b-button>
     <b-button class="btn_response" v-on:click="responseQuizz('Non')">Non</b-button>
-    </div>
-     <div class="row" v-else>
-    <b-button class="btn_response" disabled>Oui</b-button>
-    <b-button class="btn_response" disabled>Non</b-button>
-    </div>
+    
+      </div>
+     
     <div v-if="result == true && statut == 'respond'">
+      <div class="row">
+      <b-button class="btn_response" :style="{'background-color':color_oui}" disabled >Oui</b-button>
+      <b-button class="btn_response" :style="{'background-color':color_non}" disabled>Non</b-button>
+      </div>
       <p class="response_true">
-        Super bonne réponse ;) ! 
+        Super, bonne réponse ;) ! 
       </p>
       <b-button class="btn_response" v-on:click="nextQuestion()">Suivant</b-button>
       </div>
       <div v-if="result == false && statut == 'respond'">
+        <div class="row">
+      <b-button class="btn_response" :style="{'background-color':color_oui}" disabled >Oui</b-button>
+      <b-button class="btn_response" :style="{'background-color':color_non}" disabled>Non</b-button>
+      </div>
              <p class="response_false">
-        Dommage Mauvaise réponse :( ! 
+        Dommage mauvaise réponse :( ! 
       </p>
       <b-button class="btn_response" v-on:click="nextQuestion()">Suivant</b-button>
       </div>
-  </div>
-  <div class="row">
-<img :src="poster">
-<img :src="acteur_image">
+  
   </div>
   </div>
 </template>
@@ -72,8 +81,11 @@ export default {
       result:'',
       questions:'',
       statut:'notRespond',
-      timer:30000,
-      modal_statut:'notshow'
+      timer:30,
+      modal_statut:'notshow',
+      color_oui:'',
+      color_non:'',
+      color_timer:''
 
     };
   },
@@ -86,6 +98,7 @@ export default {
       this.movie = await this.$axios.$get(
         this.baseUrl + "/movie/popular?api_key=" + this.apikeys
       )
+      console.log(this.movie)
       for (var i = 0; i < this.movie.results.length; i++) {
         this.movie_title.push(this.movie.results[i].title)
         this.movie_id.push(this.movie.results[i].id)
@@ -128,15 +141,23 @@ export default {
         if (responseUser == "Oui") {
        
           this.result=true
+          this.color_oui='green'
+          this.color_non='red'
           return this.score+=1
         } else {
+          this.color_oui='red'
+          this.color_non='green'
           return this.result=false
         }
       }
       else {
          if (responseUser == "Oui") {
+           this.color_oui='red'
+          this.color_non='green'
           return this.result=false
         } else {
+          this.color_oui='red'
+          this.color_non='green'
           this.result=true
           return this.score+=1
         }
@@ -156,6 +177,7 @@ export default {
         this.statut='notRespond'
         this.score=0
         this.timer=30
+        this.color_timer='white'
         this.getRandomMovie()
       this.initQuizz()
       }
@@ -173,6 +195,11 @@ export default {
             if (this.timer <= 0){
         clearInterval()
         this.getGameOver()
+      }
+
+      else if (this.timer<=6){
+        this.color_timer='red'
+         this.timer--
       }
       else {
         this.timer--
@@ -208,52 +235,80 @@ export default {
 }
 
 .question {
- color: #fff;
-    font-size: 57px;
+     color: #fff;
+    font-size: 35px;
     line-height: 1.3;
     display: block;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 38px;
 
 }
 
 .response_true{
     color: #28a745;
     font-size: 38px;
-    margin-left: 272px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .response_false{
     color: #ee0000;
     font-size: 38px;
-    margin-left: 272px;
+    text-align: center;
+    font-weight: bold;
 }
 
-.score {
- color: #fff;
-    font-size: 57px;
-    line-height: 1.3;
-   
-}
-.time {
- color: #fff;
-    font-size: 57px;
-    line-height: 1.3;
-   
-}
+
+
 
 .btn_response {
-      background-color: #e25d5d;
+    background-color: blanchedalmond;
     border-radius: 20px;
     color: rgb(0, 0, 0);
-    font-size: 59px;
-    padding: 10px 40px;
-    margin-left: 231px;
+    font-size: 26px;
     display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 6em;
 }
 .btn_response:hover {
   background-color: #fff;
   color: #555;
   border: 1px solid #fff;
+}
+
+.image_movie{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+   margin-bottom: 36px;
+}
+
+.image_movie .movie{
+ width: 55%;
+    margin: 1rem;
+    height: 100%;
+       border: 0px solid transparent;
+    border: 5px solid;
+        border-color: darkgray;
+
+
+}
+.image_movie .acteur{
+         width: 23%;
+    border: 5px solid;
+    border-color: darkgray;
+}
+.time_score{
+      margin-left: 37px;
+    margin-bottom: 233px;
+    font-size: 36px;
+     color: #fff;
+    line-height: 1.3;
+    width: 19%;
+   
 }
 </style>
