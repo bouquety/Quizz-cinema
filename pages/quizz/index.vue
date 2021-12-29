@@ -1,10 +1,21 @@
 <template>
   <div class="section_un">
+    <b-modal   centered ref="gameover"  header-class="justify-content-center" title="Game Over" hide-footer hide-header-close no-close-on-backdrop no-close-on-esc>
+    <!-- <div class="modal-header text-center">
+  <h3 class="modal-title w-100">Quiz Results</h3>
+</div> -->
+    <div class="d-block text-center">
+     <p> Malheureusement le temps imparti est écoulé ! </p>
+     <p> Votre score est de {{score}} </p>
+     <p> Voulez-vous réessayer ?</p>
+    </div>
+        <b-button class="mt-3" block v-on:click="nextQuestion()">Recommencer </b-button>
+  </b-modal>
     <div class="score">
    Score : {{score}}
 </div>
 <div class="time">
-   timer : 1:25
+   Temps restant : {{timer}}
 </div>
     <div class="container">
       <div class="row">                  
@@ -33,8 +44,10 @@
       <b-button class="btn_response" v-on:click="nextQuestion()">Suivant</b-button>
       </div>
   </div>
+  <div class="row">
 <img :src="poster">
 <img :src="acteur_image">
+  </div>
   </div>
 </template>
 
@@ -58,12 +71,14 @@ export default {
       score:0,
       result:'',
       questions:'',
-      statut:'notRespond'
+      statut:'notRespond',
+      timer:30000,
+      modal_statut:'notshow'
 
     };
   },
   created() {
-    this.initQuizz(), this.getRandomMovie();
+    this.initQuizz(), this.getRandomMovie(), this.getTimer()
   },
 
   methods: {
@@ -79,7 +94,6 @@ export default {
       this.acteur = await this.$axios.$get(
         this.baseUrl + "/person/popular?api_key=" + this.apikeys
       )
-            console.log(this.acteur.results)
 
       for (var i = 0; i < this.acteur.results.length; i++) {
         this.acteur_movie.push(this.acteur.results[i].name)
@@ -105,7 +119,6 @@ export default {
       );
       for (var i = 0; i < this.id.cast.length; i++) {
         if (this.acteur_movie[this.random] == this.id.cast[i].name) {
-          console.log('true')
            responseResultat = true;
         }
       
@@ -121,7 +134,6 @@ export default {
         }
       }
       else {
-      console.log('falseeee')
          if (responseUser == "Oui") {
           return this.result=false
         } else {
@@ -138,9 +150,43 @@ export default {
     },
 
     nextQuestion(){
-      this.statut='notRespond'
-      this.getRandomMovie()
+      if (this.modal_statut == 'show'){
+        this.modal_statut='notshow'
+        this.$refs['gameover'].hide()
+        this.statut='notRespond'
+        this.score=0
+        this.timer=30
+        this.getRandomMovie()
       this.initQuizz()
+      }
+      else{
+        this.statut='notRespond'
+        this.getRandomMovie()
+        this.initQuizz()
+      }
+    },
+
+    getTimer(){
+    
+     
+        setInterval(() => {
+            if (this.timer <= 0){
+        clearInterval()
+        this.getGameOver()
+      }
+      else {
+        this.timer--
+      }
+        },1000)
+        
+      
+    },
+    getGameOver(){
+       this.$nextTick(()=>{
+     this.$refs['gameover'].show()
+      this.modal_statut='show'
+  });
+     
     }
   },
 };
