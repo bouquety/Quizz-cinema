@@ -221,7 +221,7 @@ export default {
 <style scoped>
 
 .section_un {
-  background-image: url(/_nuxt/assets/images/black-monochrome-simple-background-texture-circle-light-534895-wallhere.com.jpg);
+  background-image: url(/_nuxt/static/images/black-monochrome-simple-background-texture-circle-light-534895-wallhere.com.jpg);
     height: 100vh;
     
     justify-content: center;

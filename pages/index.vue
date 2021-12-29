@@ -6,7 +6,7 @@
                   <img src="../assets/images/Red and Black Shadow Loud Voices for Justice Logo (1).png">
 
         <div class="row">
-          <h1 class="tittleone">ENVIE DE TESTER VOS CONNAISSANCES CINEMATOGRAPHIQUE ? </h1>
+          <h1 class="tittleone">ENVIE DE TESTER VOS CONNAISSANCES CINÉMATOGRAPHIQUE ? </h1>
           <p class="txt_title">
             Bienvenue au quizz ! Une série de question vous sera proposé, vous devrez y répondre par "oui" ou par "non". Essayer de répondre au maximum de question que vous pouvez dans le temps imparti ! Bonne chance !
           </p>
@@ -37,7 +37,7 @@ img{
     margin-right: auto;
 }
 .section_un {
-  background-image: url("../assets/images/black-monochrome-simple-background-texture-circle-light-534895-wallhere.com.jpg");
+  background-image: url("../static/images/black-monochrome-simple-background-texture-circle-light-534895-wallhere.com.jpg");
   height: 100vh;
   display: flex;
   justify-content: center;
